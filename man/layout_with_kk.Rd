@@ -111,6 +111,7 @@ Undirected Graphs. \emph{Information Processing Letters}, 31/1, 7--15, 1989.
 
 Other graph layouts: 
 \code{\link{add_layout_}()},
+\code{\link{cluster_wise}()},
 \code{\link{component_wise}()},
 \code{\link{layout_as_bipartite}()},
 \code{\link{layout_as_star}()},

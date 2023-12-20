@@ -127,6 +127,7 @@ other layout algorithms.
 
 Other graph layouts: 
 \code{\link{add_layout_}()},
+\code{\link{cluster_wise}()},
 \code{\link{component_wise}()},
 \code{\link{layout_as_bipartite}()},
 \code{\link{layout_as_star}()},

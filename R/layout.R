@@ -82,7 +82,7 @@ layout_ <- function(graph, layout, ...) {
   )))
 
   ids <- sapply(modifiers, "[[", "id")
-  stopifnot(all(ids %in% c("component_wise", "normalize")))
+  stopifnot(all(ids %in% c("component_wise", "cluster_wise", "normalize")))
   if (anyDuplicated(ids)) stop("Duplicate modifiers")
   names(modifiers) <- ids
 
@@ -99,6 +99,34 @@ layout_ <- function(graph, layout, ...) {
       method = modifiers[["component_wise"]]$args$merge_method
     )
     all_coords[unlist(sapply(comps, vertex_attr, "id")), ] <- all_coords[]
+    result <- all_coords
+  } else {
+    result <- do_call(layout$fun, list(graph = graph), layout$args)
+  }
+  
+  if ("cluster_wise" %in% ids) {
+    V(graph)$id <- seq(vcount(graph))
+    
+    cluster_id <- modifiers[["cluster_wise"]]$args$cluster_id
+    if (is.null(cluster_id)) {
+      stop("Please provide cluster_id")
+    }
+    ## Factor level?
+    all_clusters <- unique(vertex_attr(graph, cluster_id))
+
+    clusters <- lapply(all_clusters, function(cl) {
+      subg <- induced_subgraph(graph, which(vertex_attr(graph, cluster_id)==cl))
+      subg
+    })
+    coords <- lapply(clusters, function(clus) {
+      do_call(layout$fun, list(graph = clus), layout$args)
+    })
+    all_coords <- merge_coords(
+      clusters,
+      coords,
+      method = modifiers[["cluster_wise"]]$args$merge_method
+    )
+    all_coords[unlist(sapply(clusters, vertex_attr, "id")), ] <- all_coords[]
     result <- all_coords
   } else {
     result <- do_call(layout$fun, list(graph = graph), layout$args)
@@ -207,6 +235,32 @@ component_wise <- function(merge_method = "dla") {
     args = args
   )
 }
+
+
+#' Cluster-wise layout
+#'
+#' This is a layout modifier function, and it can be used
+#' to calculate the layout separately for each cluster
+#' of the graph.
+#'
+#' @param merge_method Merging algorithm, the `method`
+#'   argument of [merge_coords()].
+#'
+#' @family layout modifiers
+#' @family graph layouts
+#' @seealso [merge_coords()], [layout_()].
+#' @export
+#' @examples
+#' #TBU
+cluster_wise <- function(merge_method = "dla", cluster_id=NULL) {
+  args <- grab_args()
+
+  layout_modifier(
+    id = "cluster_wise",
+    args = args
+  )
+}
+
 
 #' Normalize layout
 #'

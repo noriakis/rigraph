@@ -25,10 +25,12 @@ g \%>\%
 \code{\link[=merge_coords]{merge_coords()}}, \code{\link[=layout_]{layout_()}}.
 
 Other layout modifiers: 
+\code{\link{cluster_wise}()},
 \code{\link{normalize}()}
 
 Other graph layouts: 
 \code{\link{add_layout_}()},
+\code{\link{cluster_wise}()},
 \code{\link{layout_as_bipartite}()},
 \code{\link{layout_as_star}()},
 \code{\link{layout_as_tree}()},
